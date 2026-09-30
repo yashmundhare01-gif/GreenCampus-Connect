@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Login | GreenCampus Connect</title><link rel="stylesheet" href="assets/css/style.css">
+<style>
+.login-page{min-height:100vh;display:grid;place-items:center;padding:25px;background:radial-gradient(circle at top,#e8f7eb,#f7faf7 55%)}
+.login-card{width:min(430px,100%);background:#fff;border:1px solid #dfebe1;border-radius:25px;padding:35px;box-shadow:0 20px 70px #17462a12}
+.login-card h1{margin:10px 0 5px}.login-card p{color:#728078;font-size:13px}.login-card form{display:grid;gap:16px;margin-top:25px}.login-error{color:#b02a37;font-size:13px;min-height:20px}.back{font-size:13px;color:#31764a;text-decoration:none}
+</style></head>
+<body><main class="login-page"><div class="login-card">
+<a class="back" href="index.html">← Back to reporting</a>
+<div class="brand" style="margin-top:25px"><span class="brand-mark">🌿</span><span>GreenCampus <b>Connect</b><small>Sanjivani College of Engineering</small></span></div>
+<h1>Admin Dashboard</h1><p>Authorized college welfare/administration access only.</p>
+<form id="loginForm">
+<label>Username<input id="username" autocomplete="username" required value="admin"></label>
+<label>Password<input id="password" type="password" autocomplete="current-password" required placeholder="Enter password"></label>
+<button class="btn btn-primary" id="loginBtn">Sign In</button><div id="error" class="login-error"></div>
+</form>
+<div style="font-size:11px;color:#88948d;margin-top:15px">Demo credentials are documented in README.md.</div>
+</div></main>
+<script>
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const error=document.getElementById('error'),btn=document.getElementById('loginBtn');error.textContent='';btn.disabled=true;
+ try{const r=await fetch('api/auth.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username.value,password:password.value})});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||'Login failed');location.href='admin/index.html';}
+ catch(x){error.textContent=x.message}finally{btn.disabled=false}
+});
+</script></body></html>

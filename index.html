@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenCampus Connect | Sanjivani COE</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html"><span class="brand-mark">🌿</span><span>GreenCampus <b>Connect</b><small>Sanjivani College of Engineering</small></span></a>
+  <a class="header-link" href="login.html">Admin Login</a>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">CAMPUS-ONLY ENVIRONMENT REPORTING</span>
+    <h1>Make our campus <span>greener.</span></h1>
+    <p>Spot a cleanliness, waste, water, electricity or environmental issue? Report it in under a minute with a photo and campus location.</p>
+    <a class="btn btn-primary" href="#report">Report an Issue <span>→</span></a>
+  </div>
+  <div class="hero-card">
+    <div class="leaf-orbit">🌱</div>
+    <h3>One report can make a difference.</h3>
+    <p>Photo → Description → Location → Category → Submit</p>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <span>🏫 Sanjivani Rural Education Society's College of Engineering</span>
+  <span>🔒 Campus-only platform</span>
+  <span>📱 Mobile friendly</span>
+</section>
+
+<section class="report-section" id="report">
+  <div class="section-heading">
+    <span class="eyebrow">QUICK REPORT</span>
+    <h2>Report a campus issue</h2>
+    <p>Use your phone camera or choose an image from your gallery.</p>
+  </div>
+
+  <form id="reportForm" class="report-form" enctype="multipart/form-data">
+    <div class="form-grid">
+      <label>Reporter Type
+        <select name="reporter_type" required>
+          <option value="Student">Student</option>
+          <option value="Staff">Staff</option>
+        </select>
+      </label>
+      <label>Name<input name="name" required maxlength="120" placeholder="Your full name"></label>
+      <label>Department<input name="department" required maxlength="120" placeholder="e.g. CSE"></label>
+      <label>Contact<input name="contact" required maxlength="120" placeholder="Phone or college email"></label>
+    </div>
+
+    <div class="photo-box">
+      <div class="photo-preview" id="photoPreview"><span>📷</span><p>No photo selected</p></div>
+      <div class="photo-actions">
+        <label class="btn btn-secondary">Take Photo
+          <input id="cameraInput" type="file" name="photo" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
+        </label>
+        <label class="btn btn-outline">Choose from Gallery
+          <input id="galleryInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        </label>
+        <small>JPG, PNG or WEBP · Maximum 5 MB</small>
+      </div>
+    </div>
+
+    <label>Problem Description
+      <textarea name="description" required maxlength="3000" rows="4" placeholder="Describe what you observed and why it needs attention..."></textarea>
+    </label>
+
+    <div class="form-grid three">
+      <label>Issue Category<select id="category" name="category_id" required><option value="">Loading...</option></select></label>
+      <label>Campus Location<select id="location" name="location_id" required><option value="">Loading...</option></select></label>
+      <label>Priority<select name="priority" required><option>Low</option><option selected>Medium</option><option>High</option></select></label>
+    </div>
+
+    <button class="btn btn-primary btn-submit" type="submit" id="submitBtn">Submit Report</button>
+    <div class="form-message" id="formMessage"></div>
+  </form>
+</section>
+
+<section class="info-section">
+  <div><span class="icon">📍</span><h3>Campus locations</h3><p>Reports use predefined locations so the responsible team can find the issue quickly.</p></div>
+  <div><span class="icon">🛠️</span><h3>Track resolution</h3><p>College administration can assign departments and update progress.</p></div>
+  <div><span class="icon">🌎</span><h3>Greener campus</h3><p>Analytics reveal recurring issues and areas that need attention.</p></div>
+</section>
+</main>
+
+<footer>GreenCampus Connect · Sanjivani Rural Education Society's College of Engineering · Campus Environmental Reporting</footer>
+
+<div class="modal hidden" id="successModal">
+  <div class="modal-card success-card">
+    <div class="success-icon">✓</div>
+    <h2>Report Submitted Successfully</h2>
+    <p>Your issue has been recorded and sent to the college administration.</p>
+    <div class="report-id" id="reportId"></div>
+    <button class="btn btn-primary" onclick="location.reload()">Submit Another Report</button>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
