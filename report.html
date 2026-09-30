@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Report Detail | GreenCampus Connect</title><link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="admin.css"><style>
+.detail-wrap{max-width:1100px;margin:auto}.back-link{color:#2a7d48;text-decoration:none;font-size:13px;font-weight:800}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}.detail-card{background:#fff;border:1px solid #dfe9e1;border-radius:18px;padding:23px}.detail-card h2{margin-top:0}.detail-photo{width:100%;max-height:430px;object-fit:cover;border-radius:13px;background:#eff5f0;min-height:220px;display:grid;place-items:center;color:#87968d}.detail-list{display:grid;grid-template-columns:145px 1fr;gap:9px;font-size:13px}.detail-list dt{font-weight:800;color:#718077}.detail-list dd{margin:0}.full{grid-column:1/-1}.update-form{display:grid;grid-template-columns:1fr 1fr;gap:15px}.update-form .full-field{grid-column:1/-1}.history-item{padding:12px;border-left:3px solid #55a76e;background:#f7faf7;margin:8px 0;font-size:12px}.success-msg{color:#247443;font-weight:800}.error-msg{color:#b23a42;font-weight:800}@media(max-width:800px){.detail-grid{grid-template-columns:1fr}.update-form{grid-template-columns:1fr}.full,.full-field{grid-column:auto}}
+</style></head>
+<body class="admin-body"><header class="admin-header"><a class="brand" href="../index.html"><span class="brand-mark">🌿</span><span>GreenCampus <b>Connect</b><small>Report Detail</small></span></a><a class="btn btn-outline" href="index.html">← Dashboard</a></header>
+<main class="admin-main"><div class="detail-wrap"><a class="back-link" href="index.html">← Back to reports</a><div id="content"><p>Loading report...</p></div></div></main>
+<script>
+const API='../api/';const id=new URLSearchParams(location.search).get('id');const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+let departments=[];
+async function api(url,opt={}){const r=await fetch(url,opt);const d=await r.json();if(!r.ok||!d.success){if(r.status===401)location.href='../login.html';throw new Error(d.message||'Request failed')}return d}
+async function init(){try{const [d,dep]=await Promise.all([api(API+'report.php?id='+encodeURIComponent(id)),api(API+'departments.php')]);departments=dep.data;render(d.data,d.history)}catch(e){document.getElementById('content').innerHTML='<p class="error-msg">'+esc(e.message)+'</p>'}}
+function render(r,h){
+ document.getElementById('content').innerHTML=`<div class="dashboard-title"><div><span class="eyebrow">REPORT DETAIL</span><h1>${esc(r.report_code)}</h1><p>Submitted ${new Date(r.created_at.replace(' ','T')).toLocaleString()}</p></div><span class="badge ${esc(r.status).replace(' ','-')}">${esc(r.status)}</span></div>
+ <div class="detail-grid">
+ <section class="detail-card"><h2>Issue Photo</h2>${r.image_path?`<img class="detail-photo" src="../${esc(r.image_path)}" alt="Uploaded issue photo">`:'<div class="detail-photo">No photo uploaded for this demo report</div>'}</section>
+ <section class="detail-card"><h2>Report Information</h2><dl class="detail-list">
+ <dt>Category</dt><dd>${esc(r.category)}</dd><dt>Location</dt><dd>${esc(r.location)}</dd><dt>Priority</dt><dd class="priority-${esc(r.priority)}">${esc(r.priority)}</dd><dt>Description</dt><dd>${esc(r.description)}</dd>
+ </dl></section>
+ <section class="detail-card"><h2>Reporter</h2><dl class="detail-list"><dt>Type</dt><dd>${esc(r.reporter_type)}</dd><dt>Name</dt><dd>${esc(r.reporter)}</dd><dt>Department</dt><dd>${esc(r.reporter_department)}</dd><dt>Contact</dt><dd>${esc(r.contact)}</dd></dl></section>
+ <section class="detail-card"><h2>Administration</h2><dl class="detail-list"><dt>Assigned</dt><dd>${esc(r.assigned_department||'Not assigned')}</dd><dt>Remarks</dt><dd>${esc(r.resolution_remarks||'No resolution remarks yet')}</dd><dt>Updated</dt><dd>${new Date(r.updated_at.replace(' ','T')).toLocaleString()}</dd></dl></section>
+ <section class="detail-card full"><h2>Manage Report</h2><form id="updateForm" class="update-form">
+ <label>Status<select id="status"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='In Progress'?'selected':''}>In Progress</option><option ${r.status==='Resolved'?'selected':''}>Resolved</option></select></label>
+ <label>Assigned Department<select id="department"><option value="0">Not assigned</option>${departments.map(d=>`<option value="${d.id}" ${Number(d.id)===Number(r.assigned_department_id)?'selected':''}>${esc(d.name)}</option>`).join('')}</select></label>
+ <label class="full-field">Resolution Remarks<textarea id="remarks" rows="5" placeholder="Enter action taken / resolution information...">${esc(r.resolution_remarks||'')}</textarea></label>
+ <div class="full-field"><button class="btn btn-primary" type="submit" id="saveBtn">Save Changes</button><span id="saveMsg" style="margin-left:12px;font-size:12px"></span></div></form></section>
+ <section class="detail-card full"><h2>Status History</h2><div>${h.map(x=>`<div class="history-item"><strong>${esc(x.new_status)}</strong> · ${new Date(x.changed_at.replace(' ','T')).toLocaleString()} · ${esc(x.changed_by_name)}<br>${esc(x.remarks||'No remarks')}</div>`).join('')}</div></section>
+ </div>`;
+ document.getElementById('updateForm').onsubmit=async e=>{e.preventDefault();const b=document.getElementById('saveBtn'),m=document.getElementById('saveMsg');b.disabled=true;m.textContent='Saving...';m.className='';try{const d=await api(API+'reports.php',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(id),status:document.getElementById('status').value,assigned_department_id:Number(document.getElementById('department').value),resolution_remarks:document.getElementById('remarks').value})});m.textContent=d.message;m.className='success-msg';setTimeout(init,500)}catch(e){m.textContent=e.message;m.className='error-msg'}finally{b.disabled=false}};
+}
+init();
+</script></body></html>
